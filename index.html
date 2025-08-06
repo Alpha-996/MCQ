@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Exam</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="start-screen">
+            <h1>Welcome to the Exam</h1>
+            <p>Please enter your name to begin.</p>
+            <input type="text" id="username" placeholder="Enter your name here" autocomplete="name">
+            <button id="start-btn">Start Exam</button>
+        </div>
+
+        <div id="quiz-container" class="hidden">
+            <h1 id="quiz-header">All the best!</h1>
+            <form id="quiz-form">
+                </form>
+            <button type="submit" form="quiz-form" id="submit-btn">Submit Answers</button>
+        </div>
+
+        <div id="results-container" class="hidden">
+            <div id="results-content">
+                <h1 id="score-heading">Your Results</h1>
+                <p id="score-display"></p>
+                <h2>Incorrect Answers</h2>
+                <div id="incorrect-answers">
+                    </div>
+            </div>
+            <div class="results-actions">
+                 <button id="download-txt-btn">Download as Text</button>
+                 <button id="download-pdf-btn">Download as PDF</button>
+                 <button id="restart-btn">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
