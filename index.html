@@ -3,48 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCQ Exam Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Cost Unit MCQ Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            transform: scale(1.05);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
 </head>
-<body>
-    <main class="container">
-        <section id="start-screen" class="screen active">
-            <h1 class="title">MCQ Exam Platform</h1>
-            <p class="subtitle">Enter your name to begin the assessment.</p>
-            <input type="text" id="username" placeholder="Your Full Name" autocomplete="name" class="input-field">
-            <button id="start-btn" class="btn btn-primary">Start Exam</button>
-        </section>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-        <section id="quiz-container" class="screen">
-            <header class="quiz-header">
-                <h1 id="quiz-user-greeting">All the best!</h1>
-            </header>
-            <form id="quiz-form">
-                </form>
-            <button type="submit" form="quiz-form" id="submit-btn" class="btn btn-primary">Submit Answers</button>
-        </section>
-
-        <section id="results-container" class="screen">
-            <div id="results-content">
-                <h1 class="title">Your Results</h1>
-                <p id="score-display"></p>
-                <h2 class="subtitle">Review of Incorrect Answers</h2>
-                <div id="incorrect-answers-list">
-                    </div>
+    <div id="quiz-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
+        
+        <!-- Quiz Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Industry Cost Unit Quiz</h1>
+            <p class="text-gray-600">Test your knowledge!</p>
+            <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
             </div>
-            <div class="results-actions">
-                 <button id="download-txt-btn" class="btn btn-secondary">Download .txt</button>
-                 <button id="download-pdf-btn" class="btn btn-success">Download .pdf</button>
-                 <button id="restart-btn" class="btn btn-danger">Take Again</button>
-            </div>
-        </section>
-    </main>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 46</div>
+        </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-    <script src="script.js" defer></script>
+        <!-- Question Area -->
+        <div id="question-area">
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
+                What is the cost unit for 'Transport'?
+            </h2>
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex justify-end">
+            <button id="next-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center hidden">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+        <p class="text-2xl text-gray-600 mb-6">
+            You scored <span id="score-text" class="font-bold text-blue-500">0</span> out of <span id="total-text" class="font-bold">0</span>.
+        </p>
+
+        <div id="wrong-answers-container" class="text-left mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>
+            <!-- Wrong answers will be listed here -->
+        </div>
+
+        <button id="restart-btn" class="mt-8 bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- 1. QUIZ DATA ---
+        // All questions and correct answers from the table
+        const quizData = [
+            { industry: "Transport", correctAnswer: "Passenger-Kilometre or Tonne-Kilometre" },
+            { industry: "Automobile", correctAnswer: "Number" },
+            { industry: "Steel", correctAnswer: "Per ton" },
+            { industry: "Power (Electricity)", correctAnswer: "Kilo-watt Hour" },
+            { industry: "Brewing", correctAnswer: "Barrel / Hecto litre" },
+            { industry: "Cement", correctAnswer: "Per ton" },
+            { industry: "Cable", correctAnswer: "Metre or Kilometre" },
+            { industry: "Coal Mining", correctAnswer: "Ton / Tonne" },
+            { industry: "Engineering", correctAnswer: "Contract / Job" },
+            { industry: "Gas", correctAnswer: "Cubic metre / Therm" },
+            { industry: "Paper", correctAnswer: "Ream" },
+            { industry: "Quarries", correctAnswer: "Tonne" },
+            { industry: "Petroleum", correctAnswer: "Barrel, Gallon, Litre" },
+            { industry: "Sand & Gravel", correctAnswer: "Cubic yard, meter" },
+            { industry: "Chemical", correctAnswer: "Litre" },
+            { industry: "Timber", correctAnswer: "Cu. ft" },
+            { industry: "Fertiliser", correctAnswer: "Per ton" },
+            { industry: "Hotel & Catering", correctAnswer: "Room / Cover" },
+            { industry: "Television / Radio / VCR", correctAnswer: "Per set" },
+            { industry: "Building Service", correctAnswer: "Sq. metre" },
+            { industry: "Building", correctAnswer: "Per Sq. ft" },
+            { industry: "Interior Decoration", correctAnswer: "Each Job" },
+            { industry: "Catering Service", correctAnswer: "Number of meals served" },
+            { industry: "Nursing Home", correctAnswer: "Per bed per day" },
+            { industry: "Soap", correctAnswer: "Kg / Litre" },
+            { industry: "Advertisement", correctAnswer: "Each Job" },
+            { industry: "Brick Making", correctAnswer: "Per 1000 bricks" },
+            { industry: "Nuts / Bolts", correctAnswer: "Gross" },
+            { industry: "Pins / Clips", correctAnswer: "Gross" },
+            { industry: "Printing Press", correctAnswer: "Per 1000 copies" },
+            { industry: "Shoe Making", correctAnswer: "Per Pair" },
+            { industry: "Personnel", correctAnswer: "No. of employees" },
+            { industry: "Health Care", correctAnswer: "Per Bed Occupied, Out-Patients" },
+            { industry: "Telephone Service", correctAnswer: "Per call made" },
+            { industry: "Canteen", correctAnswer: "Nature of meals served" },
+            { industry: "Ship-Building", correctAnswer: "Per ship" },
+            { industry: "Cotton / Jute", correctAnswer: "Bale" },
+            { industry: "Confectionery", correctAnswer: "Piece / Kg" },
+            { industry: "Education", correctAnswer: "Per enrolled student" },
+            { industry: "Materials Storage", correctAnswer: "Unit / Value" },
+            { industry: "Air Line", correctAnswer: "Tonne-Km, Passenger-Km" },
+            { industry: "Batch Costing", correctAnswer: "Cost per batch" },
+            { industry: "Unit Costing", correctAnswer: "Per tonne or per bag" },
+            { industry: "Research & Development", correctAnswer: "No. of Research Projects" },
+            { industry: "Customer Service", correctAnswer: "No. of customer calls, Hours spent in Servicing Products etc." },
+            { industry: "Sugar", correctAnswer: "Ton" },
+            { industry: "Pharmaceutical", correctAnswer: "Per batch" },
+            { industry: "Readymade Garments", correctAnswer: "Per batch" }
+        ];
+
+        // Unique set of all possible correct answers to use as distractors
+        const allCostUnits = [...new Set(quizData.map(item => item.correctAnswer))];
+
+        // --- 2. STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let questions = [];
+
+        // --- 3. DOM ELEMENTS ---
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreText = document.getElementById('score-text');
+        const totalText = document.getElementById('total-text');
+        const wrongAnswersContainer = document.getElementById('wrong-answers-container');
+
+        // --- 4. UTILITY FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place (Fisher-Yates shuffle)
+         * @param {Array} array Array to shuffle
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        /**
+         * Generates two unique distractor answers
+         * @param {string} correctAnswer The correct answer to avoid
+         * @returns {Array<string>} An array of two distractor strings
+         */
+        function getDistractors(correctAnswer) {
+            const distractors = [];
+            while (distractors.length < 2) {
+                const randomUnit = allCostUnits[Math.floor(Math.random() * allCostUnits.length)];
+                // Ensure the distractor is not the correct answer and not already in the list
+                if (randomUnit !== correctAnswer && !distractors.includes(randomUnit)) {
+                    distractors.push(randomUnit);
+                }
+            }
+            return distractors;
+        }
+        
+        // --- 5. CORE QUIZ LOGIC ---
+
+        /**
+         * Starts the quiz: shuffles questions and loads the first one
+         */
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            wrongAnswers = [];
+            // Shuffle the quiz data for a different order each time
+            questions = [...quizData];
+            shuffleArray(questions);
+            
+            // Show quiz and hide results
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        /**
+         * Loads the current question and options
+         */
+        function loadQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            nextBtn.disabled = true;
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                
+                // Update text and progress
+                questionText.textContent = `What is the cost unit for '${currentQuestion.industry}'?`;
+                questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+                // Get options
+                const distractors = getDistractors(currentQuestion.correctAnswer);
+                const options = [currentQuestion.correctAnswer, ...distractors];
+                shuffleArray(options);
+
+                // Create option buttons
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.industry);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Handles the user selecting an answer
+         * @param {HTMLButtonElement} selectedButton The button that was clicked
+         * @param {string} selectedAnswer The text of the selected answer
+         * @param {string} correctAnswer The correct answer text
+         * @param {string} industry The industry/question text
+         */
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, industry) {
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-70');
+                // Show the correct answer
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            // Mark the selected answer
+            selectedButton.classList.add('selected');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Store info for the results page
+                wrongAnswers.push({
+                    industry: industry,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            // Enable the Next button
+            nextBtn.disabled = false;
+        }
+
+        /**
+         * Shows the final results screen
+         */
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            scoreText.textContent = score;
+            totalText.textContent = questions.length;
+
+            // Display wrong answers
+            wrongAnswersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>'; // Reset
+            if (wrongAnswers.length === 0) {
+                wrongAnswersContainer.innerHTML += '<p class="text-green-600">Perfect score! No incorrect answers to review.</p>';
+            } else {
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-800">${item.industry}</p>
+                        <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
+                        <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
+                    `;
+                    wrongAnswersContainer.appendChild(div);
+                });
+            }
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', startQuiz);
+
+        // --- 7. INITIALIZE QUIZ ---
+        startQuiz();
+
+    </script>
 </body>
 </html>
