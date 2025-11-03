@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthem for Doomed Youth MCQ Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            transform: scale(1.05);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div id="quiz-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
+        
+        <!-- Quiz Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">"Anthem for Doomed Youth" Quiz</h1>
+            <p class="text-gray-600">Test your knowledge!</p>
+            <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 29</div>
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-area">
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
+                Name the poem opening with the line – “What passing-bells for these who die as cattle?”
+            </h2>
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex justify-end">
+            <button id="next-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center hidden">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+        <p class="text-2xl text-gray-600 mb-6">
+            You scored <span id="score-text" class="font-bold text-blue-500">0</span> out of <span id="total-text" class="font-bold">0</span>.
+        </p>
+
+        <div id="wrong-answers-container" class="text-left mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>
+            <!-- Wrong answers will be listed here -->
+        </div>
+
+        <button id="restart-btn" class="mt-8 bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- 1. QUIZ DATA ---
+        // All questions, options, and correct answers for "Anthem for Doomed Youth"
+        const quizData = [
+            { question: "Name the poem opening with the line – “What passing-bells for these who die as cattle?”", options: ["Lucy Gray", "Anthem for Doomed Youth", "How Do I Love Thee", "None of these"], correctAnswer: "Anthem for Doomed Youth" },
+            { question: "The sounds of artillery shells in the poem “Anthem for Doomed Youth” are compared to", options: ["Bugles", "Rifles’ rapid rattle", "Anger of the guns", "Shrill demented choirs"], correctAnswer: "Shrill demented choirs" },
+            { question: "What is the meaning of ‘pall’ in the poem “Anthem for Doomed Youth”?", options: ["Pale colour", "Cloth over a coffin", "A flower", "A kind of weapon"], correctAnswer: "Cloth over a coffin" },
+            { question: "What musical instrument is played in the ‘sad shires’ to lament the dead soldiers?", options: ["Violins", "Bugles", "Drums", "Guitars"], correctAnswer: "Bugles" },
+            { question: "Wilfred Owen was a ______ poet.", options: ["First world war", "Second world war", "Victorian", "Neo–classical"], correctAnswer: "First world war" },
+            { question: "In “Anthem for Doomed Youth” the firing of the guns is described as", options: ["Dangerous wrath", "Vengeful wrath", "Monstrous anger", "Devil’s anger"], correctAnswer: "Monstrous anger" },
+            { question: "The central theme of Owen’s “Anthem for Doomed Youth” is", options: ["Celebration of war", "Horrors of war", "Glory of war", "History of war"], correctAnswer: "Horrors of war" },
+            { question: "‘Passing-bells’ in Owen’s poem indicates", options: ["Coronation", "Wedding", "Funeral", "Victory"], correctAnswer: "Funeral" },
+            { question: "“Anthem for Doomed Youth” is a ______ poem. Fill in the blanks from the following options", options: ["Love", "War", "Nature", "Gothic"], correctAnswer: "War" },
+            { question: "Who will mourn for the dead soldiers?", options: ["Their young wives", "Their parents", "Shells and bugles", "War mongers"], correctAnswer: "Shells and bugles" },
+            { question: "Which of the following words means ‘Mad’?", options: ["Lamented", "Rented", "Demented", "Vented"], correctAnswer: "Demented" },
+            { question: "“Passing bells” means:", options: ["Bells attached to fast tanks", "Funeral bells", "Bells rung for weddings"], correctAnswer: "Funeral bells" },
+            { question: "“Hasty orisons” are:", options: ["Quickly made bombs", "A type of bread made for soldiers", "Hurried prayers"], correctAnswer: "Hurried prayers" },
+            { question: "What kind of candles will be lit to help the soldiers to heaven?", options: ["Candles in church", "Candles placed on coffins", "There will be no candles, only the teary eyes of boys"], correctAnswer: "There will be no candles, only the teary eyes of boys" },
+            { question: "“Pall” means:", options: ["A coffin", "A cloth spread over a coffin", "A pale face"], correctAnswer: "A cloth spread over a coffin" },
+            { question: "What kind of flowers will be at the soldiers’ funeral?", options: ["Wreaths and sprays", "Roses and carnations", "The flowers will be replaced by the “tenderness of patient minds”"], correctAnswer: "The flowers will be replaced by the “tenderness of patient minds”" },
+            { question: "People drew down blinds at dusk to:", options: ["Commemorate loved ones who had died", "Commemorate the ending of the war", "Commemorate their sadness at the war"], correctAnswer: "Commemorate loved ones who had died" },
+            { question: "Who is the author of this poem?", options: ["Walt Whitman", "Wilfred Owen", "Maya Angelou", "Robert Frost"], correctAnswer: "Wilfred Owen" },
+            { question: "What is one of the poem’s themes?", options: ["Marriage", "Childhood", "Death", "Employment"], correctAnswer: "Death" },
+            { question: "What is the poem’s setting?", options: ["Vietnam", "World War I", "Iraq", "The American Civil War"], correctAnswer: "World War I" },
+            { question: "We can hear the “stuttering Rifle’s Rapid Rattle”. This is an example of;", options: ["alliteration", "simile", "tone", "assonance"], correctAnswer: "alliteration" },
+            { question: "What can we hear? “Only the monstrous ANGER of guns”. This is an example of;", options: ["hyperbole", "emotive language", "cliche", "personification"], correctAnswer: "personification" },
+            { question: "“What passing bells for those who die as cattle”. The technique used in this line are", options: ["alliteration", "metaphor", "hyperbole", "simile"], correctAnswer: "simile" },
+            { question: "Fill in the gap: “Their flowers the tenderness of ______ minds,”", options: ["quiet", "anxious", "patient", "fearful"], correctAnswer: "patient" },
+            { question: "Fill in the gap: “What candles may be held to ______ them all?”", options: ["mourn", "welcome", "speed", "lament"], correctAnswer: "speed" },
+            { question: "What does pallor mean?", options: ["an unhealthy, pale appearance", "a flushed and excited appearance", "a person who carries coffins", "a person who prepares dead bodies to be buried"], correctAnswer: "an unhealthy, pale appearance" },
+            { question: "What does shires mean? (in context)", options: ["prayers", "villages", "large, heavy draft horses", "counties"], correctAnswer: "counties" },
+            { question: "What is the form of “Anthem for Doomed Youth”?", options: ["A villanelle", "A sonnet", "A ballad", "A limerick"], correctAnswer: "A sonnet" },
+            { question: "What animals are the soldiers compared to in the first line?", options: ["Hedgehogs", "Frogs", "Cows (Cattle)", "Horses"], correctAnswer: "Cows (Cattle)" }
+        ];
+
+
+        // --- 2. STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let questions = [];
+
+        // --- 3. DOM ELEMENTS ---
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreText = document.getElementById('score-text');
+        const totalText = document.getElementById('total-text');
+        const wrongAnswersContainer = document.getElementById('wrong-answers-container');
+
+        // --- 4. UTILITY FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place (Fisher-Yates shuffle)
+         * @param {Array} array Array to shuffle
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // --- 5. CORE QUIZ LOGIC ---
+
+        /**
+         * Starts the quiz: shuffles questions and loads the first one
+         */
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            wrongAnswers = [];
+            // Shuffle the quiz data for a different order each time
+            questions = [...quizData];
+            shuffleArray(questions);
+            
+            // Show quiz and hide results
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        /**
+         * Loads the current question and options
+         */
+        function loadQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            nextBtn.disabled = true;
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                
+                // Update text and progress
+                questionText.textContent = currentQuestion.question;
+                questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+                // Get options and shuffle them
+                const options = [...currentQuestion.options];
+                shuffleArray(options);
+
+                // Create option buttons
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.question);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Handles the user selecting an answer
+         * @param {HTMLButtonElement} selectedButton The button that was clicked
+         * @param {string} selectedAnswer The text of the selected answer
+         * @param {string} correctAnswer The correct answer text
+         * @param {string} question The question text
+         */
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, question) {
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-70');
+                // Show the correct answer
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            // Mark the selected answer
+            selectedButton.classList.add('selected');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Store info for the results page
+                wrongAnswers.push({
+                    question: question,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            // Enable the Next button
+            nextBtn.disabled = false;
+        }
+
+        /**
+         * Shows the final results screen
+         */
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            scoreText.textContent = score;
+            totalText.textContent = questions.length;
+
+            // Display wrong answers
+            wrongAnswersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>'; // Reset
+            if (wrongAnswers.length === 0) {
+                wrongAnswersContainer.innerHTML += '<p class="text-green-600">Perfect score! No incorrect answers to review.</p>';
+            } else {
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-800">${item.question}</p>
+                        <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
+                        <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
+                    `;
+                    wrongAnswersContainer.appendChild(div);
+                });
+            }
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', startQuiz);
+
+        // --- 7. INITIALIZE QUIZ ---
+        startQuiz();
+
+    </script>
+</body>
+</html>
+

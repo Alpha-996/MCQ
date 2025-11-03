@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucy Gray MCQ Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            transform: scale(1.05);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div id="quiz-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
+        
+        <!-- Quiz Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">"Lucy Gray" Poem Quiz</h1>
+            <p class="text-gray-600">Test your knowledge!</p>
+            <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 54</div>
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-area">
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
+                According to Wordsworth, Lucy has merged with ________.
+            </h2>
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex justify-end">
+            <button id="next-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center hidden">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+        <p class="text-2xl text-gray-600 mb-6">
+            You scored <span id="score-text" class="font-bold text-blue-500">0</span> out of <span id="total-text" class="font-bold">0</span>.
+        </p>
+
+        <div id="wrong-answers-container" class="text-left mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>
+            <!-- Wrong answers will be listed here -->
+        </div>
+
+        <button id="restart-btn" class="mt-8 bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- 1. QUIZ DATA ---
+        // All questions, options, and correct answers for "Lucy Gray"
+        const quizData = [
+            { question: "According to Wordsworth, Lucy has merged with ________.", options: ["Nature", "Moor", "Storm", "Life"], correctAnswer: "Nature" },
+            { question: "‘To-night will be a stormy night.’ In ‘Lucy Gray’ is a voice of", options: ["The father", "The poet", "The mother", "Lucy"], correctAnswer: "The father" },
+            { question: "Lucy lived with her parents on a wild __________.", options: ["Forest", "hill", "moor", "Village"], correctAnswer: "moor" },
+            { question: "Lucy Gray has been described as", options: ["Brave child", "Young child", "Solitary child", "Sad child"], correctAnswer: "Solitary child" },
+            { question: "Who detected Lucy Gray’s footprints on the snow?", options: ["Lucy’s father", "Lucy’s brother", "Lucy’s friend", "Lucy’s mother"], correctAnswer: "Lucy’s mother" },
+            { question: "In the poem ‘Lucy Gray’ the storm came", options: ["At midnight", "In the afternoon", "With strong force", "Before its time"], correctAnswer: "Before its time" },
+            { question: "Where can Lucy Gray be still found?", options: ["Home", "Lonesome wild", "Bridge", "Forest"], correctAnswer: "Lonesome wild" },
+            { question: "When did Lucy Gray set out for the town?", options: ["Two o'clock", "Five o'clock", "Seven o'clock", "Nine o'clock"], correctAnswer: "Two o'clock" },
+            { question: "Which of the following baby Animal is mentioned in the poem 'Lucy Gray'?", options: ["Calf", "Lamb", "Cub", "Fawn"], correctAnswer: "Fawn" },
+            { question: "Where did Lucy's footprints end?", options: ["In the middle of a bridge", "In An open field", "By the long stone-wall", "On the steep hill's edge"], correctAnswer: "In the middle of a bridge" },
+            { question: "And Never looks behind; And sings a ________ song. Fill in the blanks from the following options", options: ["Melancholic", "Jovial", "Melodious", "Solitary"], correctAnswer: "Solitary" },
+            { question: "Who is the poet of the poem \"Lucy Gray\"", options: ["William Wordsworth", "R.K Narayan", "William Wordsworth", "William Shakespeare"], correctAnswer: "William Wordsworth" },
+            { question: "When did Lucy Gray leave for the town", options: ["Afternoon (2 o'clock)", "Night", "Midday", "Morning (2 o'clock)"], correctAnswer: "Afternoon (2 o'clock)" },
+            { question: "The unit for measuring distance", options: ["Mile", "Meter", "Kilometer", "Furlong"], correctAnswer: "Furlong" },
+            { question: "The poem Lucy Gray is a __________", options: ["Folktale", "Ballad", "Fictional", "Mythologic"], correctAnswer: "Ballad" },
+            { question: "Who were/was wretched all night?", options: ["Lucy", "Lucy's Sister", "Lucy's Parents", "Lucy's Friends"], correctAnswer: "Lucy's Parents" },
+            { question: "What type of song did Lucy sing?", options: ["Happy Song", "A lonely song", "Carol", "National Anthem"], correctAnswer: "A lonely song" },
+            { question: "What is a \"Fawn\"?", options: ["Hare", "Bird", "Insect", "Young Deer"], correctAnswer: "Young Deer" },
+            { question: "What did Lucy Gray take with her?", options: ["Water Bottle", "Lantern", "A bag", "Stick"], correctAnswer: "Lantern" },
+            { question: "The poet had _______ heard of Lucy Gray.", options: ["Seldom", "often", "rarely", "Never"], correctAnswer: "often" },
+            { question: "Lucy Gray has been written in ?", options: ["1797", "1799", "1801"], correctAnswer: "1799" },
+            { question: "Lucy has ___", options: ["One sister", "One brother", "none of them"], correctAnswer: "none of them" },
+            { question: "Lucy was a ______", options: ["Solitary child", "orphan child", "both of the above"], correctAnswer: "Solitary child" },
+            { question: "Suddenly the ______", options: ["Drought come", "Tsunami come", "storm came"], correctAnswer: "storm came" },
+            { question: "Lucy's parents find her ______ in the snow.", options: ["footprints", "slippers", "shoes"], correctAnswer: "footprints" },
+            { question: "Lucy was going to bring her ____", options: ["sister", "mother", "father"], correctAnswer: "mother" },
+            { question: "When did Lucy Gray leave for the town?", options: ["Afternoon", "Morning", "Night", "Midday"], correctAnswer: "Afternoon" },
+            { question: "What word describes Lucy in the first stanza?", options: ["Happy", "Lost", "Solitary", "Playful"], correctAnswer: "Solitary" },
+            { question: "From the first stanza, can we determine where Lucy Gray lives?", options: ["In a town", "In a forest", "On a wild moor", "The poem doesn't say"], correctAnswer: "On a wild moor" },
+            { question: "Where does Lucy live?", options: ["In a city", "In a village", "On a wide moor", "In a forest"], correctAnswer: "On a wide moor" },
+            { question: "How does Lucy Gray ultimately meet her fate?", options: ["She falls into a river And drowns", "She gets lost in a snow storm And freezes to death", "She is kidnapped by strangers", "She wanders off And is never seen again"], correctAnswer: "She falls into a river And drowns" },
+            { question: "The word \"Human door\" symbolize:", options: ["Lucy's isolation from the outside world", "Her connection to human civilization", "A gateway to adventure", "A place of danger"], correctAnswer: "Her connection to human civilization" },
+            { question: "The phrase \"Will never more be seen\" suggests:", options: ["Lucy Gray is hiding", "Lucy Gray is lost forever"], correctAnswer: "Lucy Gray is lost forever" },
+            { question: "The storm came ______ its time:", options: ["before", "on", "After"], correctAnswer: "before" },
+            { question: "What is the central event described in \"Lucy Gray\"?", options: ["Lucy's wedding", "Lucy’s death", "Lucy's birth", "Lucy's journey"], correctAnswer: "Lucy’s death" },
+            { question: "How does Lucy Gray die in the poem?", options: ["Drowns in a river", "Gets lost in a storm", "Falls off a cliff", "Dies of An illness"], correctAnswer: "Drowns in a river" },
+            { question: "Where does Lucy Gray live in the poem?", options: ["In a city", "By the sea", "On a moor", "In a forest"], correctAnswer: "On a moor" },
+            { question: "What do Lucy's parents find in the snow that leads them to her fate?", options: ["Her footprints", "Her lantern", "A note she wrote", "Her favorite toy"], correctAnswer: "Her footprints" },
+            { question: "What is the main subject of the first stanza of \"Lucy Gray\"?", options: ["The poet's desire to see Lucy Gray", "Lucy Gray's daily routine", "The poet's encounter with Lucy Gray", "Lucy Gray's appearance"], correctAnswer: "The poet's encounter with Lucy Gray" },
+            { question: "How does the poet describe Lucy Gray in the first stanza?", options: ["As a mischievous child", "As a solitary child", "As a popular child", "As a rebellious child"], correctAnswer: "As a solitary child" },
+            { question: "What do Lucy's parents hope to achieve by searching for her?", options: ["To find her alive", "To punish her for getting lost", "To find closure", "To bring her back home safely"], correctAnswer: "To find her alive" },
+            { question: "How do Lucy's parents feel as they search for her?", options: ["Angry", "Sad", "Indifferent", "Happy"], correctAnswer: "Sad" },
+            { question: "What does the wooden bridge symbolize in the poem?", options: ["The end of Lucy's journey", "A connection between the past And the present", "A barrier to finding Lucy", "A place of safety And refuge"], correctAnswer: "The end of Lucy's journey" },
+            { question: "How does the poet use the setting of the wild moor to create a sense of isolation?", options: ["By describing the moor as vast And empty", "By describing the moor as dangerous", "By describing the moor as beautiful", "By describing the moor as populated"], correctAnswer: "By describing the moor as vast And empty" },
+            { question: "What did Lucy's mother do when she saw Lucy's footprints in the snow?", options: ["She laughed", "She cried", "She ran after the footprints", "She ignored the footprints"], correctAnswer: "She ran after the footprints" },
+            { question: "What did Lucy's mother say about meeting Lucy?", options: ["They would meet her on the bridge", "They would meet her in heaven", "They would meet her in the town", "They would never meet her again"], correctAnswer: "They would meet her in heaven" },
+            { question: "Why did Lucy's mother say they would meet Lucy in heaven?", options: ["Because Lucy was playing there", "Because there was no hope left to find her in this world", "Because Lucy was An Angel", "Because Lucy was waiting for them"], correctAnswer: "Because there was no hope left to find her in this world" },
+            { question: "What did Lucy's parents do after seeing her footprints?", options: ["They gave up searching", "They followed the footprints", "They went back home", "They called for help"], correctAnswer: "They followed the footprints" },
+            { question: "How did Lucy's parents feel when they saw her footprints?", options: ["Happy", "Sad", "Angry", "Indifferent"], correctAnswer: "Sad" },
+            { question: "What did Lucy's parents do as they followed her footprints?", options: ["They cried", "They laughed", "They sang", "They shouted"], correctAnswer: "They shouted" },
+            { question: "How did Lucy's parents know they were following her footprints?", options: ["They saw her walking ahead", "They saw her footprints in the snow", "They heard her voice", "They found her belongings"], correctAnswer: "They saw her footprints in the snow" },
+            { question: "What did Lucy's parents pass through as they followed her footprints?", options: ["A river", "A forest", "A broken hawthorn hedge", "A mountain"], correctAnswer: "A broken hawthorn hedge" },
+            { question: "What did Lucy's parents do when they reached the open field?", options: ["They continued following the footprints", "They stopped And rested", "They went back home", "They called for help"], correctAnswer: "They continued following the footprints" },
+            { question: "What theme is prominent in \"Lucy Gray\"?", options: ["Love", "Isolation", "Adventure", "Betrayal"], correctAnswer: "Isolation" }
+        ];
+
+        // --- 2. STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let questions = [];
+
+        // --- 3. DOM ELEMENTS ---
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreText = document.getElementById('score-text');
+        const totalText = document.getElementById('total-text');
+        const wrongAnswersContainer = document.getElementById('wrong-answers-container');
+
+        // --- 4. UTILITY FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place (Fisher-Yates shuffle)
+         * @param {Array} array Array to shuffle
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // --- 5. CORE QUIZ LOGIC ---
+
+        /**
+         * Starts the quiz: shuffles questions and loads the first one
+         */
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            wrongAnswers = [];
+            // Shuffle the quiz data for a different order each time
+            questions = [...quizData];
+            shuffleArray(questions);
+            
+            // Show quiz and hide results
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        /**
+         * Loads the current question and options
+         */
+        function loadQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            nextBtn.disabled = true;
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                
+                // Update text and progress
+                questionText.textContent = currentQuestion.question;
+                questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+                // Get options and shuffle them
+                const options = [...currentQuestion.options];
+                shuffleArray(options);
+
+                // Create option buttons
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.question);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Handles the user selecting an answer
+         * @param {HTMLButtonElement} selectedButton The button that was clicked
+         * @param {string} selectedAnswer The text of the selected answer
+         * @param {string} correctAnswer The correct answer text
+         * @param {string} question The question text
+         */
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, question) {
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-70');
+                // Show the correct answer
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            // Mark the selected answer
+            selectedButton.classList.add('selected');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Store info for the results page
+                wrongAnswers.push({
+                    question: question,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            // Enable the Next button
+            nextBtn.disabled = false;
+        }
+
+        /**
+         * Shows the final results screen
+         */
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            scoreText.textContent = score;
+            totalText.textContent = questions.length;
+
+            // Display wrong answers
+            wrongAnswersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>'; // Reset
+            if (wrongAnswers.length === 0) {
+                wrongAnswersContainer.innerHTML += '<p class="text-green-600">Perfect score! No incorrect answers to review.</p>';
+            } else {
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-800">${item.question}</p>
+                        <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
+                        <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
+                    `;
+                    wrongAnswersContainer.appendChild(div);
+                });
+            }
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', startQuiz);
+
+        // --- 7. INITIALIZE QUIZ ---
+        startQuiz();
+
+    </script>
+</body>
+</html>
+
