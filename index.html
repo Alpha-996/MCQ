@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cost Unit MCQ Portal</title>
+    <title>Lucy Gray MCQ Portal</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -32,18 +32,18 @@
         
         <!-- Quiz Header -->
         <div class="mb-6 text-center">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Industry Cost Unit Quiz</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">"Lucy Gray" Poem Quiz</h1>
             <p class="text-gray-600">Test your knowledge!</p>
             <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
                 <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
             </div>
-            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 46</div>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 54</div>
         </div>
 
         <!-- Question Area -->
         <div id="question-area">
             <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
-                What is the cost unit for 'Transport'?
+                According to Wordsworth, Lucy has merged with ________.
             </h2>
             <div id="options-container" class="grid grid-cols-1 gap-4">
                 <!-- Options will be dynamically inserted here -->
@@ -77,60 +77,63 @@
 
     <script>
         // --- 1. QUIZ DATA ---
-        // All questions and correct answers from the table
+        // All questions, options, and correct answers for "Lucy Gray"
         const quizData = [
-            { industry: "Transport", correctAnswer: "Passenger-Kilometre or Tonne-Kilometre" },
-            { industry: "Automobile", correctAnswer: "Number" },
-            { industry: "Steel", correctAnswer: "Per ton" },
-            { industry: "Power (Electricity)", correctAnswer: "Kilo-watt Hour" },
-            { industry: "Brewing", correctAnswer: "Barrel / Hecto litre" },
-            { industry: "Cement", correctAnswer: "Per ton" },
-            { industry: "Cable", correctAnswer: "Metre or Kilometre" },
-            { industry: "Coal Mining", correctAnswer: "Ton / Tonne" },
-            { industry: "Engineering", correctAnswer: "Contract / Job" },
-            { industry: "Gas", correctAnswer: "Cubic metre / Therm" },
-            { industry: "Paper", correctAnswer: "Ream" },
-            { industry: "Quarries", correctAnswer: "Tonne" },
-            { industry: "Petroleum", correctAnswer: "Barrel, Gallon, Litre" },
-            { industry: "Sand & Gravel", correctAnswer: "Cubic yard, meter" },
-            { industry: "Chemical", correctAnswer: "Litre" },
-            { industry: "Timber", correctAnswer: "Cu. ft" },
-            { industry: "Fertiliser", correctAnswer: "Per ton" },
-            { industry: "Hotel & Catering", correctAnswer: "Room / Cover" },
-            { industry: "Television / Radio / VCR", correctAnswer: "Per set" },
-            { industry: "Building Service", correctAnswer: "Sq. metre" },
-            { industry: "Building", correctAnswer: "Per Sq. ft" },
-            { industry: "Interior Decoration", correctAnswer: "Each Job" },
-            { industry: "Catering Service", correctAnswer: "Number of meals served" },
-            { industry: "Nursing Home", correctAnswer: "Per bed per day" },
-            { industry: "Soap", correctAnswer: "Kg / Litre" },
-            { industry: "Advertisement", correctAnswer: "Each Job" },
-            { industry: "Brick Making", correctAnswer: "Per 1000 bricks" },
-            { industry: "Nuts / Bolts", correctAnswer: "Gross" },
-            { industry: "Pins / Clips", correctAnswer: "Gross" },
-            { industry: "Printing Press", correctAnswer: "Per 1000 copies" },
-            { industry: "Shoe Making", correctAnswer: "Per Pair" },
-            { industry: "Personnel", correctAnswer: "No. of employees" },
-            { industry: "Health Care", correctAnswer: "Per Bed Occupied, Out-Patients" },
-            { industry: "Telephone Service", correctAnswer: "Per call made" },
-            { industry: "Canteen", correctAnswer: "Nature of meals served" },
-            { industry: "Ship-Building", correctAnswer: "Per ship" },
-            { industry: "Cotton / Jute", correctAnswer: "Bale" },
-            { industry: "Confectionery", correctAnswer: "Piece / Kg" },
-            { industry: "Education", correctAnswer: "Per enrolled student" },
-            { industry: "Materials Storage", correctAnswer: "Unit / Value" },
-            { industry: "Air Line", correctAnswer: "Tonne-Km, Passenger-Km" },
-            { industry: "Batch Costing", correctAnswer: "Cost per batch" },
-            { industry: "Unit Costing", correctAnswer: "Per tonne or per bag" },
-            { industry: "Research & Development", correctAnswer: "No. of Research Projects" },
-            { industry: "Customer Service", correctAnswer: "No. of customer calls, Hours spent in Servicing Products etc." },
-            { industry: "Sugar", correctAnswer: "Ton" },
-            { industry: "Pharmaceutical", correctAnswer: "Per batch" },
-            { industry: "Readymade Garments", correctAnswer: "Per batch" }
+            { question: "According to Wordsworth, Lucy has merged with ________.", options: ["Nature", "Moor", "Storm", "Life"], correctAnswer: "Nature" },
+            { question: "‘To-night will be a stormy night.’ In ‘Lucy Gray’ is a voice of", options: ["The father", "The poet", "The mother", "Lucy"], correctAnswer: "The father" },
+            { question: "Lucy lived with her parents on a wild __________.", options: ["Forest", "hill", "moor", "Village"], correctAnswer: "moor" },
+            { question: "Lucy Gray has been described as", options: ["Brave child", "Young child", "Solitary child", "Sad child"], correctAnswer: "Solitary child" },
+            { question: "Who detected Lucy Gray’s footprints on the snow?", options: ["Lucy’s father", "Lucy’s brother", "Lucy’s friend", "Lucy’s mother"], correctAnswer: "Lucy’s mother" },
+            { question: "In the poem ‘Lucy Gray’ the storm came", options: ["At midnight", "In the afternoon", "With strong force", "Before its time"], correctAnswer: "Before its time" },
+            { question: "Where can Lucy Gray be still found?", options: ["Home", "Lonesome wild", "Bridge", "Forest"], correctAnswer: "Lonesome wild" },
+            { question: "When did Lucy Gray set out for the town?", options: ["Two o'clock", "Five o'clock", "Seven o'clock", "Nine o'clock"], correctAnswer: "Two o'clock" },
+            { question: "Which of the following baby Animal is mentioned in the poem 'Lucy Gray'?", options: ["Calf", "Lamb", "Cub", "Fawn"], correctAnswer: "Fawn" },
+            { question: "Where did Lucy's footprints end?", options: ["In the middle of a bridge", "In An open field", "By the long stone-wall", "On the steep hill's edge"], correctAnswer: "In the middle of a bridge" },
+            { question: "And Never looks behind; And sings a ________ song. Fill in the blanks from the following options", options: ["Melancholic", "Jovial", "Melodious", "Solitary"], correctAnswer: "Solitary" },
+            { question: "Who is the poet of the poem \"Lucy Gray\"", options: ["William Wordsworth", "R.K Narayan", "William Wordsworth", "William Shakespeare"], correctAnswer: "William Wordsworth" },
+            { question: "When did Lucy Gray leave for the town", options: ["Afternoon (2 o'clock)", "Night", "Midday", "Morning (2 o'clock)"], correctAnswer: "Afternoon (2 o'clock)" },
+            { question: "The unit for measuring distance", options: ["Mile", "Meter", "Kilometer", "Furlong"], correctAnswer: "Furlong" },
+            { question: "The poem Lucy Gray is a __________", options: ["Folktale", "Ballad", "Fictional", "Mythologic"], correctAnswer: "Ballad" },
+            { question: "Who were/was wretched all night?", options: ["Lucy", "Lucy's Sister", "Lucy's Parents", "Lucy's Friends"], correctAnswer: "Lucy's Parents" },
+            { question: "What type of song did Lucy sing?", options: ["Happy Song", "A lonely song", "Carol", "National Anthem"], correctAnswer: "A lonely song" },
+            { question: "What is a \"Fawn\"?", options: ["Hare", "Bird", "Insect", "Young Deer"], correctAnswer: "Young Deer" },
+            { question: "What did Lucy Gray take with her?", options: ["Water Bottle", "Lantern", "A bag", "Stick"], correctAnswer: "Lantern" },
+            { question: "The poet had _______ heard of Lucy Gray.", options: ["Seldom", "often", "rarely", "Never"], correctAnswer: "often" },
+            { question: "Lucy Gray has been written in ?", options: ["1797", "1799", "1801"], correctAnswer: "1799" },
+            { question: "Lucy has ___", options: ["One sister", "One brother", "none of them"], correctAnswer: "none of them" },
+            { question: "Lucy was a ______", options: ["Solitary child", "orphan child", "both of the above"], correctAnswer: "Solitary child" },
+            { question: "Suddenly the ______", options: ["Drought come", "Tsunami come", "storm came"], correctAnswer: "storm came" },
+            { question: "Lucy's parents find her ______ in the snow.", options: ["footprints", "slippers", "shoes"], correctAnswer: "footprints" },
+            { question: "Lucy was going to bring her ____", options: ["sister", "mother", "father"], correctAnswer: "mother" },
+            { question: "When did Lucy Gray leave for the town?", options: ["Afternoon", "Morning", "Night", "Midday"], correctAnswer: "Afternoon" },
+            { question: "What word describes Lucy in the first stanza?", options: ["Happy", "Lost", "Solitary", "Playful"], correctAnswer: "Solitary" },
+            { question: "From the first stanza, can we determine where Lucy Gray lives?", options: ["In a town", "In a forest", "On a wild moor", "The poem doesn't say"], correctAnswer: "On a wild moor" },
+            { question: "Where does Lucy live?", options: ["In a city", "In a village", "On a wide moor", "In a forest"], correctAnswer: "On a wide moor" },
+            { question: "How does Lucy Gray ultimately meet her fate?", options: ["She falls into a river And drowns", "She gets lost in a snow storm And freezes to death", "She is kidnapped by strangers", "She wanders off And is never seen again"], correctAnswer: "She falls into a river And drowns" },
+            { question: "The word \"Human door\" symbolize:", options: ["Lucy's isolation from the outside world", "Her connection to human civilization", "A gateway to adventure", "A place of danger"], correctAnswer: "Her connection to human civilization" },
+            { question: "The phrase \"Will never more be seen\" suggests:", options: ["Lucy Gray is hiding", "Lucy Gray is lost forever"], correctAnswer: "Lucy Gray is lost forever" },
+            { question: "The storm came ______ its time:", options: ["before", "on", "After"], correctAnswer: "before" },
+            { question: "What is the central event described in \"Lucy Gray\"?", options: ["Lucy's wedding", "Lucy’s death", "Lucy's birth", "Lucy's journey"], correctAnswer: "Lucy’s death" },
+            { question: "How does Lucy Gray die in the poem?", options: ["Drowns in a river", "Gets lost in a storm", "Falls off a cliff", "Dies of An illness"], correctAnswer: "Drowns in a river" },
+            { question: "Where does Lucy Gray live in the poem?", options: ["In a city", "By the sea", "On a moor", "In a forest"], correctAnswer: "On a moor" },
+            { question: "What do Lucy's parents find in the snow that leads them to her fate?", options: ["Her footprints", "Her lantern", "A note she wrote", "Her favorite toy"], correctAnswer: "Her footprints" },
+            { question: "What is the main subject of the first stanza of \"Lucy Gray\"?", options: ["The poet's desire to see Lucy Gray", "Lucy Gray's daily routine", "The poet's encounter with Lucy Gray", "Lucy Gray's appearance"], correctAnswer: "The poet's encounter with Lucy Gray" },
+            { question: "How does the poet describe Lucy Gray in the first stanza?", options: ["As a mischievous child", "As a solitary child", "As a popular child", "As a rebellious child"], correctAnswer: "As a solitary child" },
+            { question: "What do Lucy's parents hope to achieve by searching for her?", options: ["To find her alive", "To punish her for getting lost", "To find closure", "To bring her back home safely"], correctAnswer: "To find her alive" },
+            { question: "How do Lucy's parents feel as they search for her?", options: ["Angry", "Sad", "Indifferent", "Happy"], correctAnswer: "Sad" },
+            { question: "What does the wooden bridge symbolize in the poem?", options: ["The end of Lucy's journey", "A connection between the past And the present", "A barrier to finding Lucy", "A place of safety And refuge"], correctAnswer: "The end of Lucy's journey" },
+            { question: "How does the poet use the setting of the wild moor to create a sense of isolation?", options: ["By describing the moor as vast And empty", "By describing the moor as dangerous", "By describing the moor as beautiful", "By describing the moor as populated"], correctAnswer: "By describing the moor as vast And empty" },
+            { question: "What did Lucy's mother do when she saw Lucy's footprints in the snow?", options: ["She laughed", "She cried", "She ran after the footprints", "She ignored the footprints"], correctAnswer: "She ran after the footprints" },
+            { question: "What did Lucy's mother say about meeting Lucy?", options: ["They would meet her on the bridge", "They would meet her in heaven", "They would meet her in the town", "They would never meet her again"], correctAnswer: "They would meet her in heaven" },
+            { question: "Why did Lucy's mother say they would meet Lucy in heaven?", options: ["Because Lucy was playing there", "Because there was no hope left to find her in this world", "Because Lucy was An Angel", "Because Lucy was waiting for them"], correctAnswer: "Because there was no hope left to find her in this world" },
+            { question: "What did Lucy's parents do after seeing her footprints?", options: ["They gave up searching", "They followed the footprints", "They went back home", "They called for help"], correctAnswer: "They followed the footprints" },
+            { question: "How did Lucy's parents feel when they saw her footprints?", options: ["Happy", "Sad", "Angry", "Indifferent"], correctAnswer: "Sad" },
+            { question: "What did Lucy's parents do as they followed her footprints?", options: ["They cried", "They laughed", "They sang", "They shouted"], correctAnswer: "They shouted" },
+            { question: "How did Lucy's parents know they were following her footprints?", options: ["They saw her walking ahead", "They saw her footprints in the snow", "They heard her voice", "They found her belongings"], correctAnswer: "They saw her footprints in the snow" },
+            { question: "What did Lucy's parents pass through as they followed her footprints?", options: ["A river", "A forest", "A broken hawthorn hedge", "A mountain"], correctAnswer: "A broken hawthorn hedge" },
+            { question: "What did Lucy's parents do when they reached the open field?", options: ["They continued following the footprints", "They stopped And rested", "They went back home", "They called for help"], correctAnswer: "They continued following the footprints" },
+            { question: "What theme is prominent in \"Lucy Gray\"?", options: ["Love", "Isolation", "Adventure", "Betrayal"], correctAnswer: "Isolation" }
         ];
-
-        // Unique set of all possible correct answers to use as distractors
-        const allCostUnits = [...new Set(quizData.map(item => item.correctAnswer))];
 
         // --- 2. STATE VARIABLES ---
         let currentQuestionIndex = 0;
@@ -162,23 +165,6 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-        }
-
-        /**
-         * Generates two unique distractor answers
-         * @param {string} correctAnswer The correct answer to avoid
-         * @returns {Array<string>} An array of two distractor strings
-         */
-        function getDistractors(correctAnswer) {
-            const distractors = [];
-            while (distractors.length < 2) {
-                const randomUnit = allCostUnits[Math.floor(Math.random() * allCostUnits.length)];
-                // Ensure the distractor is not the correct answer and not already in the list
-                if (randomUnit !== correctAnswer && !distractors.includes(randomUnit)) {
-                    distractors.push(randomUnit);
-                }
-            }
-            return distractors;
         }
         
         // --- 5. CORE QUIZ LOGIC ---
@@ -214,13 +200,12 @@
                 const currentQuestion = questions[currentQuestionIndex];
                 
                 // Update text and progress
-                questionText.textContent = `What is the cost unit for '${currentQuestion.industry}'?`;
+                questionText.textContent = currentQuestion.question;
                 questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
                 progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
 
-                // Get options
-                const distractors = getDistractors(currentQuestion.correctAnswer);
-                const options = [currentQuestion.correctAnswer, ...distractors];
+                // Get options and shuffle them
+                const options = [...currentQuestion.options];
                 shuffleArray(options);
 
                 // Create option buttons
@@ -228,7 +213,7 @@
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
-                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.industry);
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.question);
                     optionsContainer.appendChild(button);
                 });
             } else {
@@ -241,9 +226,9 @@
          * @param {HTMLButtonElement} selectedButton The button that was clicked
          * @param {string} selectedAnswer The text of the selected answer
          * @param {string} correctAnswer The correct answer text
-         * @param {string} industry The industry/question text
+         * @param {string} question The question text
          */
-        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, industry) {
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, question) {
             // Disable all option buttons
             Array.from(optionsContainer.children).forEach(button => {
                 button.disabled = true;
@@ -262,7 +247,7 @@
                 selectedButton.classList.add('incorrect');
                 // Store info for the results page
                 wrongAnswers.push({
-                    industry: industry,
+                    question: question,
                     yourAnswer: selectedAnswer,
                     correctAnswer: correctAnswer
                 });
@@ -291,7 +276,7 @@
                     const div = document.createElement('div');
                     div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
                     div.innerHTML = `
-                        <p class="font-bold text-gray-800">${item.industry}</p>
+                        <p class="font-bold text-gray-800">${item.question}</p>
                         <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
                         <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
                     `;
@@ -314,3 +299,4 @@
     </script>
 </body>
 </html>
+
