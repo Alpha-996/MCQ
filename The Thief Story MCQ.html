@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Thief's Story? MCQ Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            transform: scale(1.05);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div id="quiz-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
+        
+        <!-- Quiz Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">"The Thief's Story" Quiz</h1>
+            <p class="text-gray-600">Test your knowledge!</p>
+            <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 50</div>
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-area">
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
+                Who is the author of the story ‘The Thief’s Story’?
+            </h2>
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex justify-end">
+            <button id="next-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center hidden">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+        <p class="text-2xl text-gray-600 mb-6">
+            You scored <span id="score-text" class="font-bold text-blue-500">0</span> out of <span id="total-text" class="font-bold">0</span>.
+        </p>
+
+        <div id="wrong-answers-container" class="text-left mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>
+            <!-- Wrong answers will be listed here -->
+        </div>
+
+        <button id="restart-btn" class="mt-8 bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- 1. QUIZ DATA ---
+        // All questions, options, and correct answers for "The Thief's Story"
+        const quizData = [
+            { question: "Who is the author of the story ‘The Thief’s Story’?", options: ["James Herriot", "Ruskin Bond", "Robert Arther", "Victor Canning"], correctAnswer: "Ruskin Bond" },
+            { question: "How much money did the thief steal from Anil?", options: ["500 rupees", "600 rupees (Or 100 rupees)", "700 rupees", "800 rupees"], correctAnswer: "600 rupees (Or 100 rupees)" },
+            { question: "How did the narrator attempt at being friends with Anil?", options: ["Flattering him", "Teasing him", "Introducing himself", "None of these"], correctAnswer: "Flattering him" },
+            { question: "What was the name of the shop above which Anil lived?", options: ["Laddu sweet shop", "Rasgulla sweet shop", "Jamun sweet shop", "Jumna sweet shop"], correctAnswer: "Jumna sweet shop" },
+            { question: "What was the thief’s age when he met Arun?", options: ["Fourteen", "Twelve", "Fifteen", "Sixteen"], correctAnswer: "Fifteen" },
+            { question: "The thief wanted to leave Amritsar by", options: ["10.30 Express", "11.30 Express", "11.45 Express", "10.45 Express"], correctAnswer: "10.30 Express" },
+            { question: "Why was the thief grateful to Arun?", options: ["He taught him to wrestle", "He taught him to cook", "He taught him to read and write", "He taught him to steal"], correctAnswer: "He taught him to read and write" },
+            { question: "How did the thief realize that Arun knew about his attempt to rob him?", options: ["Some notes were missing", "Arun caught him stealing", "The thief confessed", "The notes were wet"], correctAnswer: "The notes were wet" },
+            { question: "How old was Arun?", options: ["Twenty (in some books 25 given)", "Fifteen", "Thirty", "Forty"], correctAnswer: "Twenty (in some books 25 given)" },
+            { question: "Which train did Deepak intend to board?", options: ["Rajdhani Express", "Amritsar Express", "Humsafar Express", "Suvidha Express"], correctAnswer: "Amritsar Express" },
+            { question: "What was Deepak's earnest desire?", options: ["To be a good cook", "To write whole sentence", "To be a politician", "To be a good orator"], correctAnswer: "To write whole sentence" },
+            { question: "Where did Arun keep his wad of notes?", options: ["In the wooden Chest", "Under the table", "Under his mattress", "Under his pillow"], correctAnswer: "Under his mattress" },
+            { question: "Where dis Deepak Sleep?", options: ["Verandah", "Corridor", "Bedroom", "Terrace"], correctAnswer: "Verandah" },
+            { question: "How has the narrator described Anil (Arun)?", options: ["simple", "kind", "easy-going", "all of the above"], correctAnswer: "all of the above" },
+            { question: "What was Anil (Arun) doing when the boy met him?", options: ["cooking vegetables for lunch", "watching a wrestling match", "playing cricket with friends", "writing an article for the magazine"], correctAnswer: "watching a wrestling match" },
+            { question: "How did the narrator attempt at being friends with Anil (Arun)?", options: ["flattering him", "teasing him", "introducing himself", "none of the above"], correctAnswer: "flattering him" },
+            { question: "What did the boy ask Anil (Arun) for?", options: ["to give him food", "to employ him", "to give him money", "to teach him"], correctAnswer: "to employ him" },
+            { question: "How often did he change his name?", options: ["every day", "every week", "every month", "every year"], correctAnswer: "every month" },
+            { question: "He changed his name in order to stay ahead of _____", options: ["police", "employers", "none of them", "both of them"], correctAnswer: "both of them" },
+            { question: "How was the meal he cooked first night?", options: ["delicious", "mouth-watering", "finger-licking good", "terrible"], correctAnswer: "terrible" },
+            { question: "How did Hari Singh (Deepak) infer that about his food cooked first night?", options: ["Anil (Arun) said he liked it", "Anil (Arun) couldn’t have enough of it", "Anil (Arun) was licking his fingers", "Anil (Arun) gave it to a stray dog"], correctAnswer: "Anil (Arun) gave it to a stray dog" },
+            { question: "What did Anil (Arun) promise him to teach?", options: ["write his name", "cook food", "write full sentences", "all of the above"], correctAnswer: "all of the above" },
+            { question: "Who was the most trusting person narrator had ever met?", options: ["Anil (Arun)", "publisher", "Anil (Arun)’s friends", "none of the above"], correctAnswer: "Anil (Arun)" },
+            { question: "Who is easier to rob?", options: ["a careless man", "a greedy man", "a trusting man", "Anil (Arun)"], correctAnswer: "a greedy man" },
+            { question: "Who is the author of the story “The Thief’s story”?", options: ["James Heriot", "Ruskin Bond", "Robert Arthur", "Victor Canning"], correctAnswer: "Ruskin Bond" },
+            { question: "What is he a “fairly successful hand” at?", options: ["wrestling", "stealing", "deceiving", "working hard"], correctAnswer: "stealing" },
+            { question: "What was the name of the thief?", options: ["Hari (Deepak)", "Anil (Arun)", "Amol", "Harry"], correctAnswer: "Hari (Deepak)" },
+            { question: "What was the boy’s age?", options: ["15", "25", "20", "none of the above"], correctAnswer: "15" },
+            { question: "What was Anil (Arun)’s age?", options: ["15", "25 (or 20)", "30", "none of the above"], correctAnswer: "25 (or 20)" },
+            { question: "What name did he tell Anil (Arun)?", options: ["Anil (Arun) Singh", "Hari Lal", "Hari Singh (Deepak)", "Anil (Arun) Lal"], correctAnswer: "Hari Singh (Deepak)" },
+            { question: "What do you mean by the word “grunting”?", options: ["make a low inarticulate sound", "say something which is clearly audible", "shouting", "none of the above"], correctAnswer: "make a low inarticDulate sound" },
+            { question: "Did Anil (Arun) really mind his petty ways of earning money?", options: ["Yes", "no", "maybe", "he didn’t earn through petty ways"], correctAnswer: "no" },
+            { question: "“a queer way to earn money”. What is the meaning of the word “queer”?", options: ["Strange", "Famous", "Rare", "illegal"], correctAnswer: "Strange" },
+            { question: "What takes all the pleasure out of work?", options: ["robbing a careless man", "robbing a greedy man", "when someone doesn’t notice they’ve been robbed", "both a and c"], correctAnswer: "both a and c" },
+            { question: "How much money did he steal?", options: ["500", "600 (or 100)", "700", "800"], correctAnswer: "600 (or 100)" },
+            { question: "Did he get away on the Lucknow (Amrisar) Express?", options: ["Yes", "No", "Maybe", "none of the above"], correctAnswer: "No" },
+            { question: "How, according to the narrator, would Anil (Arun) feel upon finding out?", options: ["Angry", "Fear", "Acceptance", "sad"], correctAnswer: "sad" },
+            { question: "What did he do with the money?", options: ["ran away with it", "threw it", "bought a cycle with it", "returned it"], correctAnswer: "returned it" },
+            { question: "Did Anil (Arun) say anything about the robbery?", options: ["Yes", "No", "Maybe", "none of the above"], correctAnswer: "No" },
+            { question: "Why does Hari return the money?", options: ["he wanted to learn to write", "he was worried about how Anil (Arun) would feel", "he felt bad", "none of the above"], correctAnswer: "he wanted to learn to write" },
+            { question: "What do you mean by the word “unlined”?", options: ["in a line", "showing no sign of worry or anxiety", "none of the above"], correctAnswer: "showing no sign of worry or anxiety" },
+            { question: "Who does “I” refer to in the story?", options: ["Hari (Deepak)", "Anil (Arun)", "a greedy man", "none of the above"], correctAnswer: "Hari (Deepak)" },
+            { question: "What was the name of the shop above which Anil (Arun) lived?", options: ["Laddu Sweet Shop", "Rasgulla Sweet Shop", "Jamun Sweet Shop", "Jumna Sweet Shop"], correctAnswer: "Jumna Sweet Shop" },
+            { question: "What lesson would Anil (Arun) want the most Hari Singh to learn from their time together?", options: ["The importance of honesty", "Cooking skills", "How to write a book", "Wrestling techniques"], correctAnswer: "The importance of honesty" },
+            { question: "What motivates Hari Singh (Deepak) to return the stolen money to Anil (Arun)?", options: ["Fear of getting caught", "Guilt and a desire to change", "He lost the money", "Anil (Arun) asked for it back"], correctAnswer: "Guilt and a desire to change" },
+            { question: "Why did Hari Singh (Deepak) not board the train to Lucknow (Amritsar) after stealing the money?", options: ["He lost the money", "He missed the train", "A sudden change of heart", "He was afraid of getting caught"], correctAnswer: "A sudden change of heart" },
+            { question: "What does Anil (Arun)’s reaction to Hari (Deepak)’s theft teach about dealing with cheating?", options: ["To seek revenge", "To immediately forgive", "To understand and forgive", "To end the relationship"], correctAnswer: "To understand and forgive" },
+            { question: "What does Hari Singh (Deepak)’s internal conflict about stealing the money signify?", options: ["Fear of getting caught", "Desire for a better life", "Confusion about right and wrong", "The influence of Anil (Arun)’s kindness"], correctAnswer: "The influence of Anil (Arun)’s kindness" },
+            { question: "What is the most important value Hari Singh (Deepak) learns from Anil (Arun)?", options: ["The importance of education", "The skill of cooking", "The value of trust", "How to make friends"], correctAnswer: "The value of trust" },
+            { question: "Why does Anil (Arun) choose to forgive Hari Singh (Deepak) for stealing the money?", options: ["To teach him a lesson", "Because he didn’t need the money", "To improve him through compassion"], correctAnswer: "To improve him through compassion" }
+        ];
+
+
+        // --- 2. STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let questions = [];
+
+        // --- 3. DOM ELEMENTS ---
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreText = document.getElementById('score-text');
+        const totalText = document.getElementById('total-text');
+        const wrongAnswersContainer = document.getElementById('wrong-answers-container');
+
+        // --- 4. UTILITY FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place (Fisher-Yates shuffle)
+         * @param {Array} array Array to shuffle
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // --- 5. CORE QUIZ LOGIC ---
+
+        /**
+         * Starts the quiz: shuffles questions and loads the first one
+         */
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            wrongAnswers = [];
+            // Shuffle the quiz data for a different order each time
+            questions = [...quizData];
+            shuffleArray(questions);
+            
+            // Show quiz and hide results
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        /**
+         * Loads the current question and options
+         */
+        function loadQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            nextBtn.disabled = true;
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                
+                // Update text and progress
+                questionText.textContent = currentQuestion.question;
+                questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+                // Get options and shuffle them
+                const options = [...currentQuestion.options];
+                shuffleArray(options);
+
+                // Create option buttons
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.question);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Handles the user selecting an answer
+         * @param {HTMLButtonElement} selectedButton The button that was clicked
+         * @param {string} selectedAnswer The text of the selected answer
+         * @param {string} correctAnswer The correct answer text
+         * @param {string} question The question text
+         */
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, question) {
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-70');
+                // Show the correct answer
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            // Mark the selected answer
+            selectedButton.classList.add('selected');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Store info for the results page
+                wrongAnswers.push({
+                    question: question,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            // Enable the Next button
+            nextBtn.disabled = false;
+        }
+
+        /**
+         * Shows the final results screen
+         */
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            scoreText.textContent = score;
+            totalText.textContent = questions.length;
+
+            // Display wrong answers
+            wrongAnswersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>'; // Reset
+            if (wrongAnswers.length === 0) {
+                wrongAnswersContainer.innerHTML += '<p class="text-green-600">Perfect score! No incorrect answers to review.</p>';
+            } else {
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-800">${item.question}</p>
+                        <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
+                        <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
+                    `;
+                    wrongAnswersContainer.appendChild(div);
+                });
+            }
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', startQuiz);
+
+        // --- 7. INITIALIZE QUIZ ---
+        startQuiz();
+
+    </script>
+</body>
+</html>
+
