@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Education MCQ Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            transform: scale(1.05);
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #16a34a; /* green-600 */
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div id="quiz-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
+        
+        <!-- Quiz Header -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Environmental Education (CVAC 2.1) Quiz</h1>
+            <p class="text-gray-600">Test your knowledge!</p>
+            <div class="mt-4 h-2 w-full bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-2 bg-blue-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+            </div>
+            <div id="question-counter" class="text-sm text-gray-500 mt-2">Question 1 / 32</div>
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-area">
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-700 text-center mb-6">
+                The area where Silent Valley Movement started
+            </h2>
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex justify-end">
+            <button id="next-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl text-center hidden">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+        <p class="text-2xl text-gray-600 mb-6">
+            You scored <span id="score-text" class="font-bold text-blue-500">0</span> out of <span id="total-text" class="font-bold">0</span>.
+        </p>
+
+        <div id="wrong-answers-container" class="text-left mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>
+            <!-- Wrong answers will be listed here -->
+        </div>
+
+        <button id="restart-btn" class="mt-8 bg-blue-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- 1. QUIZ DATA ---
+        // All questions, options, and correct answers for "Environmental Education (CVAC 2.1)"
+        const quizData = [
+            { question: "The area where Silent Valley Movement started", options: ["Palakkad district in Kerala", "Garhwal Himalayas in Uttarakhand", "Marwar region in Rajasthan", "Ampati region in Meghalaya"], correctAnswer: "Palakkad district in Kerala" },
+            { question: "In 2023 COP-28 was held at", options: ["Glasgow", "Paris", "Durban", "Dubai"], correctAnswer: "Dubai" },
+            { question: "The name of Kerala Sasthra Sahitya Parishad (KSSP) is connected to one of the following:", options: ["Chipko Movement", "Silent Valley Movement", "Appiko Movement", "Big-dam Movement"], correctAnswer: "Silent Valley Movement" },
+            { question: "Minamata disaster is linked to", options: ["Methyl isocyanate", "Methyl alcohol", "Methyl parathion", "Methyl mercury"], correctAnswer: "Methyl mercury" },
+            { question: "Dasoli Gram Swarajya Sangh was established in 1964 by an eminent Indian environmentalist named as", options: ["Chandiprasad Bhatt", "Medha Patkar", "Bachni Devi", "Guru Jambheshwar"], correctAnswer: "Chandiprasad Bhatt" },
+            { question: "What is the wind speed of a Category-IV cyclone in km/hour?", options: ["210–250", "180–210", "150–180", "120–150"], correctAnswer: "210–250" },
+            { question: "Which one of the following is an ozone depleting substance?", options: ["PM₂.₅", "Chlorofluorocarbons", "SOₓ", "NOₓ"], correctAnswer: "Chlorofluorocarbons" },
+            { question: "Which one of the following Acts was enacted in the year 2002?", options: ["Wildlife (Protection) Act", "Air (Prevention and Control of Pollution) Act", "Forest (Conservation) Act", "Biodiversity Act"], correctAnswer: "Biodiversity Act" },
+            { question: "The name of which river is connected to Sardar Sarovar Dam Project?", options: ["Damodar", "Kaveri", "Ganga", "Narmada"], correctAnswer: "Narmada" },
+            { question: "Cartagena Protocol is connected to one of the following:", options: ["Convention on Biological Diversity (CBD)", "Reduction of carbon emission", "Mitigation of climate change", "Innovation of better disaster prediction"], correctAnswer: "Convention on Biological Diversity (CBD)" },
+            { question: "International Environmental Education Programme (IEEP) has been launched by", options: ["UNESCO", "ULO", "UNICEF", "UNO"], correctAnswer: "UNESCO" },
+            { question: "Which of these is the most frequently occurring natural disaster?", options: ["Tsunami", "Drought", "Earthquake", "Flood"], correctAnswer: "Flood" },
+            { question: "Ramsar Convention is related to", options: ["Climate change", "Wetland conservation", "Pesticide pollution", "Air pollution"], correctAnswer: "Wetland conservation" },
+            { question: "Environment Protection Act was introduced in", options: ["1988", "1972", "1986", "1989"], correctAnswer: "1986" },
+            { question: "In which region a cyclone is known as Typhoon?", options: ["India", "Canada", "Japan", "None of these"], correctAnswer: "Japan" },
+            { question: "Which one of the following is a slow-onset disaster?", options: ["Earthquake", "Drought", "Landslide", "Tsunami"], correctAnswer: "Drought" },
+            { question: "Who was associated with the Bishnoi Movement?", options: ["Amrita Devi", "Govind Sing Rawat", "Sunderlal Bahuguna", "Gaura Devi"], correctAnswer: "Amrita Devi" },
+            { question: "Who authored the book *Silent Spring*?", options: ["Frank Thone", "Charles Darwin", "Rachel Carson", "Raymond L. Bryant"], correctAnswer: "Rachel Carson" },
+            { question: "Bhopal Gas Tragedy took place because of the release of", options: ["Ammonia", "Methylene dichloride", "Methyl isocyanide", "Nitrous oxide"], correctAnswer: "Methyl isocyanide" },
+            { question: "Which pollutant was responsible for Minamata disease?", options: ["Lead", "Sulphur", "Mercury", "Zinc"], correctAnswer: "Mercury" },
+            { question: "What is the primary focus of environmental education?", options: ["Teaching students about environmental laws and regulations.", "Increasing awareness and understanding of environmental issues to encourage sustainability.", "Training individuals to become environmental activists.", "Promoting the use of natural resources for economic growth."], correctAnswer: "Increasing awareness and understanding of environmental issues to encourage sustainability." },
+            { question: "What is the primary focus of the Tbilisi Declaration of 1977?", options: ["Climate Change", "Environmental Education", "Renewable Energy", "Biodiversity Conservation"], correctAnswer: "Environmental Education" },
+            { question: "Under the Wildlife Protection Act, 1972, the term ‘Schedule I’ refers to", options: ["Species that are extinct.", "Species that are not endangered.", "Species that are completely protected.", "Species that can be hunted."], correctAnswer: "Species that are completely protected." },
+            { question: "What is the primary objective of the Forest Conservation Act, 1980?", options: ["To promote afforestation", "To conserve biological diversity", "To regulate deforestation", "To provide financial support for forest development"], correctAnswer: "To regulate deforestation" },
+            { question: "What is the main objective of the Montreal Protocol?", options: ["To reduce carbon dioxide emissions", "To protect the ozone layer by phasing out Ozone-Depleting Substances (ODS)", "To promote renewable energy sources", "To reduce greenhouse gas emissions"], correctAnswer: "To promote renewable energy sources" },
+            { question: "What is the primary factor contributing to the rapid growth of the human population in recent centuries?", options: ["Improved agricultural techniques", "Increased birth rates", "Decreased death rates", "Increased immigration rates"], correctAnswer: "Increased birth rates" },
+            { question: "What was the primary goal of the Chipko Movement?", options: ["To promote industrialization in rural areas", "To protect forests from being cut down", "To encourage urban development", "To improve agricultural practices"], correctAnswer: "To promote industrialization in rural areas" },
+            { question: "What is the primary goal of disaster management?", options: ["To prevent disasters from occurring", "To reduce the impact of disasters", "To recover from disasters", "To ignore the risk of disasters"], correctAnswer: "To recover from disasters" },
+            { question: "What instrument is used to detect and record the magnitude of earthquakes?", options: ["Barometer", "Hygrometer", "Thermometer", "Seismometer"], correctAnswer: "Seismometer" },
+            { question: "What is the primary mode of transmission for COVID-19?", options: ["Airborne particles", "Contaminated water", "Direct contact with surfaces", "Blood transfusion"], correctAnswer: "Airborne particles" },
+            { question: "What is the primary focus of environmental ethics?", options: ["The study of human economic systems and their impact on the environment", "The philosophical examination of the moral relationship between humans and the environment", "The analysis of technological advancements in environmental conservation", "The evaluation of government policies related to environmental protection"], correctAnswer: "The philosophical examination of the moral relationship between humans and the environment" },
+            { question: "What is a primary role of Non-Governmental Organizations (NGOs) in nature conservation?", options: ["Enforcing national environmental laws and regulations", "Providing financial support to government agencies", "Raising awareness and educating the public about environmental issues", "Setting up national parks and wildlife reserves"], correctAnswer: "Raising awareness and educating the public about environmental issues" }
+        ];
+
+
+        // --- 2. STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let questions = [];
+
+        // --- 3. DOM ELEMENTS ---
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreText = document.getElementById('score-text');
+        const totalText = document.getElementById('total-text');
+        const wrongAnswersContainer = document.getElementById('wrong-answers-container');
+
+        // --- 4. UTILITY FUNCTIONS ---
+
+        /**
+         * Shuffles an array in place (Fisher-Yates shuffle)
+         * @param {Array} array Array to shuffle
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // --- 5. CORE QUIZ LOGIC ---
+
+        /**
+         * Starts the quiz: shuffles questions and loads the first one
+         */
+        function startQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            wrongAnswers = [];
+            // Shuffle the quiz data for a different order each time
+            questions = [...quizData];
+            shuffleArray(questions);
+            
+            // Show quiz and hide results
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        /**
+         * Loads the current question and options
+         */
+        function loadQuestion() {
+            // Reset UI
+            optionsContainer.innerHTML = '';
+            nextBtn.disabled = true;
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                
+                // Update text and progress
+                questionText.textContent = currentQuestion.question;
+                questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+                // Get options and shuffle them
+                const options = [...currentQuestion.options];
+                shuffleArray(options);
+
+                // Create option buttons
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option', 'w-full', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'text-left', 'hover:bg-gray-100', 'hover:border-blue-400', 'transition-all', 'duration-200');
+                    button.onclick = () => selectAnswer(button, option, currentQuestion.correctAnswer, currentQuestion.question);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResults();
+            }
+        }
+
+        /**
+         * Handles the user selecting an answer
+         * @param {HTMLButtonElement} selectedButton The button that was clicked
+         * @param {string} selectedAnswer The text of the selected answer
+         * @param {string} correctAnswer The correct answer text
+         * @param {string} question The question text
+         */
+        function selectAnswer(selectedButton, selectedAnswer, correctAnswer, question) {
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-70');
+                // Show the correct answer
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            // Mark the selected answer
+            selectedButton.classList.add('selected');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Store info for the results page
+                wrongAnswers.push({
+                    question: question,
+                    yourAnswer: selectedAnswer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            // Enable the Next button
+            nextBtn.disabled = false;
+        }
+
+        /**
+         * Shows the final results screen
+         */
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            scoreText.textContent = score;
+            totalText.textContent = questions.length;
+
+            // Display wrong answers
+            wrongAnswersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Review Your Answers:</h2>'; // Reset
+            if (wrongAnswers.length === 0) {
+                wrongAnswersContainer.innerHTML += '<p class="text-green-600">Perfect score! No incorrect answers to review.</p>';
+            } else {
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('p-4', 'mb-3', 'bg-gray-50', 'rounded-lg', 'border', 'border-gray-200');
+                    div.innerHTML = `
+                        <p class="font-bold text-gray-800">${item.question}</p>
+                        <p class="text-sm text-red-600"><strong>Your Answer:</strong> ${item.yourAnswer}</p>
+                        <p class="text-sm text-green-600"><strong>Correct Answer:</strong> ${item.correctAnswer}</p>
+                    `;
+                    wrongAnswersContainer.appendChild(div);
+                });
+            }
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', startQuiz);
+
+        // --- 7. INITIALIZE QUIZ ---
+        startQuiz();
+
+    </script>
+</body>
+</html>
